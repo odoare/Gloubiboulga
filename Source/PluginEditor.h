@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "FxmeLogo.h"
 // #include <FxmeJuceTools/FxmeJuceTools.h>
 // #include <FxmeJuceTools/Components/ScrollingScopeComponent.h>
 
@@ -96,6 +97,8 @@ private:
     void createVSlider(const juce::String &paramID, const juce::String &labelText, juce::Colour c);
     void createFilterTypeBox(const juce::String &paramID, const juce::String &labelText);
     fxme::FxmeSlider* getSlider(const juce::String& paramID);
+
+    FxmeLogo logo{"",false};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GloubiboulgaAudioProcessorEditor)
 };

@@ -241,6 +241,10 @@ GloubiboulgaAudioProcessorEditor::GloubiboulgaAudioProcessorEditor (Gloubiboulga
     addAndMakeVisible(scopeRight);
 
     addAndMakeVisible(visualizer);
+
+    addAndMakeVisible(logo);
+
+    setResizable(true, true);
     setSize (800, 600);
 }
 
@@ -441,17 +445,15 @@ void GloubiboulgaAudioProcessorEditor::resized()
     lineBox4.items.add(juce::FlexItem(levelBox).withFlex(2.0f));
     lineBox4.items.add(juce::FlexItem(envBox).withFlex(2.0f));
     lineBox4.items.add(juce::FlexItem(outputBox).withFlex(2.0f));
-    lineBox4.items.add(juce::FlexItem(scopeBox).withFlex(3.0f));           
+    lineBox4.items.add(juce::FlexItem(scopeBox).withFlex(2.0f));     
+    lineBox4.items.add(juce::FlexItem(logo).withFlex(1.0f));     
+          
 
     mainLayout.items.add(juce::FlexItem(patternBox).withFlex(1.f).withMargin(juce::FlexItem::Margin(0.f, 0.f, 5.0f, 0.f)));
     mainLayout.items.add(juce::FlexItem(lineBox1).withFlex(1.f));
     mainLayout.items.add(juce::FlexItem(lineBox2).withFlex(1.f));
     mainLayout.items.add(juce::FlexItem(lineBox3).withFlex(1.f));
     mainLayout.items.add(juce::FlexItem(lineBox4).withFlex(1.f));
-    
-
-    // for (auto& row : rows)
-    //     mainLayout.items.add(juce::FlexItem(row).withFlex(1.0f));
 
     mainLayout.performLayout(bounds.reduced(10));
 }
