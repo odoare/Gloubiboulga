@@ -133,21 +133,18 @@ void GlitchVisualizer::paint(juce::Graphics& g)
 
 GloubiboulgaAudioProcessorEditor::GloubiboulgaAudioProcessorEditor (GloubiboulgaAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p), visualizer(p),
-      scopeLeft(&audioProcessor.scopeFifoLeft, 512, 256, 64, juce::Colours::cyan),
-      scopeRight(&audioProcessor.scopeFifoRight, 512, 256, 64, juce::Colours::magenta)
+      scopeLeft(&audioProcessor.scopeFifoLeft, 512, 256, 32, juce::Colours::white),
+      scopeRight(&audioProcessor.scopeFifoRight, 512, 256, 32, juce::Colours::white)
 {
     setLookAndFeel(&fxmeLookAndFeel);
 
     const auto patternColour = juce::Colours::cyan;
-    const auto seedColour = juce::Colours::grey;
-    const auto glitchColour = juce::Colours::cornflowerblue;
+    const auto seedColour = juce::Colours::grey.brighter(0.5f);
+    const auto glitchColour = juce::Colours::grey.brighter(0.5f);    
+    const auto bufferColour = juce::Colours::grey.brighter(0.5f);
+    const auto timingColour = juce::Colours::pink.darker();
     
-    const auto bufferColour = juce::Colours::cornflowerblue;
-    const auto timingColour = juce::Colours::orange;
-    const auto cutProbColour = juce::Colours::indianred;
-    const auto cutTypeColour = juce::Colours::lightsalmon;
-    const auto cutShapeColour = juce::Colours::gold;
-    const auto levelColour = juce::Colours::limegreen;
+    const auto levelColour = juce::Colours::blue.brighter(1.f);
     const auto filterColour = juce::Colours::mediumpurple;
     const auto cycleColour = juce::Colours::darkturquoise;
 
@@ -165,19 +162,15 @@ GloubiboulgaAudioProcessorEditor::GloubiboulgaAudioProcessorEditor (Gloubiboulga
     createKnob("BufferStartPosStdDev", "Pos StdDev", bufferColour);
     createKnob("BufferStartOffsetMean", "Offset Mean", bufferColour);
     createKnob("BufferStartOffsetStdDev", "Offset StdDev", bufferColour);
-    createKnob("CutProb32nd", "1/32", cutProbColour);
-    createKnob("CutProb16th", "1/16", cutProbColour);
-    createKnob("CutProb8th", "1/8", cutProbColour);
-    createKnob("CutProb4th", "1/4", cutProbColour);
+    createKnob("CutProb32nd", "1/32", timingColour);
+    createKnob("CutProb16th", "1/16", timingColour);
+    createKnob("CutProb8th", "1/8", timingColour);
+    createKnob("CutProb4th", "1/4", timingColour);
     createKnob("CutProbNormal", "Straight", straightColour);
     createKnob("CutProbDotted", "Dotted", dottedColour);
     createKnob("CutProbTrippled", "Triplet", tripletColour);
-    createKnob("CutLengthMean", "Cut Length Mean", cutShapeColour);
-    createKnob("CutLengthStdDev", "Cut Length StdDev", cutShapeColour);
-    createKnob("LevelMean", "Level Mean", levelColour);
-    createKnob("LevelStdDev", "Level StdDev", levelColour);
-    createKnob("AttackTime", "Attack Time", levelColour);
-    createKnob("DecayTime", "Decay Time", levelColour);
+    createKnob("CutLengthMean", "Cut Length Mean", timingColour);
+    createKnob("CutLengthStdDev", "Cut Length StdDev", timingColour);
 
     createFilterTypeBox("FilterType", "Filter Type");
 
@@ -189,6 +182,10 @@ GloubiboulgaAudioProcessorEditor::GloubiboulgaAudioProcessorEditor (Gloubiboulga
     createKnob("FilterAttack", "Attack", filterColour);
     createKnob("FilterDecay", "Decay", filterColour);
 
+    createKnob("LevelMean", "Level Mean", levelColour);
+    createKnob("LevelStdDev", "Level StdDev", levelColour);
+    createKnob("AttackTime", "Attack Time", levelColour);
+    createKnob("DecayTime", "Decay Time", levelColour);
     createKnob("OutputMix", "Mix", levelColour);
     createKnob("OutputLevel", "Level", levelColour);
 
@@ -244,7 +241,7 @@ GloubiboulgaAudioProcessorEditor::GloubiboulgaAudioProcessorEditor (Gloubiboulga
     addAndMakeVisible(scopeRight);
 
     addAndMakeVisible(visualizer);
-    setSize (800, 720);
+    setSize (800, 600);
 }
 
 GloubiboulgaAudioProcessorEditor::~GloubiboulgaAudioProcessorEditor()
@@ -438,8 +435,8 @@ void GloubiboulgaAudioProcessorEditor::resized()
     outputBox.items.add(juce::FlexItem(rows[10]).withFlex(1.0f));
 
     scopeBox.flexDirection = juce::FlexBox::Direction::column;
-    scopeBox.items.add(juce::FlexItem(scopeLeft).withFlex(1.0f).withMargin(2.0f));
-    scopeBox.items.add(juce::FlexItem(scopeRight).withFlex(1.0f).withMargin(2.0f));
+    scopeBox.items.add(juce::FlexItem(scopeLeft).withFlex(1.0f));
+    scopeBox.items.add(juce::FlexItem(scopeRight).withFlex(1.0f));
 
     lineBox4.items.add(juce::FlexItem(levelBox).withFlex(2.0f));
     lineBox4.items.add(juce::FlexItem(envBox).withFlex(2.0f));
