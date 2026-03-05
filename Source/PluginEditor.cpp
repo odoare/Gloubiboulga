@@ -133,8 +133,8 @@ void GlitchVisualizer::paint(juce::Graphics& g)
 
 GloubiboulgaAudioProcessorEditor::GloubiboulgaAudioProcessorEditor (GloubiboulgaAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p), visualizer(p),
-      scopeLeft(&audioProcessor.scopeFifoLeft, 512, 256, 32, juce::Colours::white),
-      scopeRight(&audioProcessor.scopeFifoRight, 512, 256, 32, juce::Colours::white)
+      scopeLeft(&audioProcessor.scopeFifoLeft, 512, 256, 64, juce::Colours::white),
+      scopeRight(&audioProcessor.scopeFifoRight, 512, 256, 64, juce::Colours::white)
 {
     setLookAndFeel(&fxmeLookAndFeel);
 
