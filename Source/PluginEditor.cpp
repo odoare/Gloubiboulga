@@ -256,7 +256,7 @@ void GloubiboulgaAudioProcessorEditor::createFilterTypeBox(const juce::String& p
 
     filterTypeData.comboBox = std::make_unique<juce::ComboBox>();
     filterTypeData.comboBox->setComponentID(paramID);
-    juce::StringArray filterChoices = {"Lowpass", "a -> o", "a -> i", "o -> i", "a -> u", "o -> u"};
+    juce::StringArray filterChoices = {"Off", "Lowpass", "a -> o", "a -> i", "o -> i", "a -> u", "o -> u"};
     filterTypeData.comboBox->addItemList(filterChoices, 1);
 
     filterTypeData.attachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(

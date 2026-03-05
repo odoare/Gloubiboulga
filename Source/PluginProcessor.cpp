@@ -127,7 +127,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout GloubiboulgaAudioProcessor::
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         "DecayTime", "Decay Time (s)", juce::NormalisableRange<float>(0.0f,0.1f,0.001f,1.f), 0.0f));
 
-    juce::StringArray filterChoices = {"Lowpass", "a -> o", "a -> i", "o -> i", "a -> u", "o -> u"};
+    juce::StringArray filterChoices = {"Off", "Lowpass", "a -> o", "a -> i", "o -> i", "a -> u", "o -> u"};
     params.push_back(std::make_unique<juce::AudioParameterChoice>("FilterType", "Filter Type", filterChoices, 0));
 
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
@@ -540,23 +540,23 @@ float GloubiboulgaAudioProcessor::calculateFormantFilteredSample (float input, d
     float endF1 = 0.0f, endF2 = 0.0f;
 
     switch (lastFilterType) {
-        case 1: // "a -> o"
+        case 2: // "a -> o"
             startF1 = 800.0f; startF2 = 1200.0f; // a
             endF1 = 500.0f;   endF2 = 1000.0f;   // o
             break;
-        case 2: // "a -> i"
+        case 3: // "a -> i"
             startF1 = 800.0f; startF2 = 1200.0f; // a
             endF1 = 300.0f;   endF2 = 2500.0f;   // i
             break;
-        case 3: // "o -> i"
+        case 4: // "o -> i"
             startF1 = 500.0f; startF2 = 1000.0f; // o
             endF1 = 300.0f;   endF2 = 2500.0f;   // i
             break;
-        case 4: // "a -> u"
+        case 5: // "a -> u"
             startF1 = 800.0f; startF2 = 1200.0f; // a
             endF1 = 300.0f;   endF2 = 800.0f;    // u
             break;
-        case 5: // "o -> u"
+        case 6: // "o -> u"
             startF1 = 500.0f; startF2 = 1000.0f; // o
             endF1 = 300.0f;   endF2 = 800.0f;    // u
             break;
@@ -692,7 +692,11 @@ float GloubiboulgaAudioProcessor::calculateGlitchSample(int channel, double samp
     
     float filteredSignal = 0.0f;
 
-    if (lastFilterType == 0) // Lowpass
+    if (lastFilterType == 0) // Off
+    {
+        filteredSignal = interpolated;
+    }
+    else if (lastFilterType == 1) // Lowpass
     {
         float currentCutoff = activeInstruction->filterFreq + filterEnv * activeInstruction->filterEnvDepth;
         filter.setLowPass(sampleRate, currentCutoff, activeInstruction->filterRes);
