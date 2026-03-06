@@ -4,6 +4,10 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="KTC7MZ" name="Gloubiboulga">
     <GROUP id="{010AAC3F-E5A0-32F9-558C-BBF883320B58}" name="Source">
+      <FILE id="CoAYJl" name="GlitchVisualizerComponent.cpp" compile="1"
+            resource="0" file="Source/GlitchVisualizerComponent.cpp"/>
+      <FILE id="rVeowJ" name="GlitchVisualizerComponent.h" compile="0" resource="0"
+            file="Source/GlitchVisualizerComponent.h"/>
       <FILE id="ts7e6W" name="FxmeLogo.cpp" compile="1" resource="0" file="Source/FxmeLogo.cpp"/>
       <FILE id="xwS5ir" name="logo686.png" compile="0" resource="1" file="Source/Assets/logo686.png"/>
       <FILE id="JhrWh1" name="FxmeLogo.h" compile="0" resource="0" file="Source/FxmeLogo.h"/>
