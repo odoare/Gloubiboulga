@@ -872,17 +872,25 @@ void GloubiboulgaAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     if (buffer.getNumChannels() > 0)
     {
+        // Only write to the scope FIFOs if there is enough space.
+        // This prevents the FIFO from overflowing when the GUI is hidden and not consuming samples.
         juce::AudioBuffer<float> leftBuffer (buffer.getArrayOfWritePointers(), 1, buffer.getNumSamples());
-        scopeFifoLeft.fillFifoWithBuffer(leftBuffer);
-
-        if (buffer.getNumChannels() > 1)
+        if (scopeFifoLeft.getFreeSpace() >= buffer.getNumSamples())
         {
-            juce::AudioBuffer<float> rightBuffer (buffer.getArrayOfWritePointers() + 1, 1, buffer.getNumSamples());
-            scopeFifoRight.fillFifoWithBuffer(rightBuffer);
+            scopeFifoLeft.fillFifoWithBuffer(leftBuffer);
         }
-        else
+
+        if (scopeFifoRight.getFreeSpace() >= buffer.getNumSamples())
         {
-            scopeFifoRight.fillFifoWithBuffer(leftBuffer);
+            if (buffer.getNumChannels() > 1)
+            {
+                juce::AudioBuffer<float> rightBuffer (buffer.getArrayOfWritePointers() + 1, 1, buffer.getNumSamples());
+                scopeFifoRight.fillFifoWithBuffer(rightBuffer);
+            }
+            else
+            {
+                scopeFifoRight.fillFifoWithBuffer(leftBuffer);
+            }
         }
     }
 }
