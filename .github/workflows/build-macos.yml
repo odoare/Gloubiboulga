@@ -1,0 +1,58 @@
+name: Build macOS Universal
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14  # Apple Silicon (M1) — supports cross-compiling x86_64 via Clang
+
+    steps:
+      - name: Checkout Gloubiboulga
+        uses: actions/checkout@v4
+        with:
+          path: Gloubiboulga
+
+      - name: Checkout JUCE
+        uses: actions/checkout@v4
+        with:
+          repository: juce-framework/JUCE
+          # Pin to a specific JUCE release for reproducible builds.
+          # Update this tag when upgrading JUCE.
+          ref: 8.0.12
+          path: JUCE
+
+      - name: Checkout FxmeJuceTools
+        uses: actions/checkout@v4
+        with:
+          repository: odoare/FxmeJuceTools
+          path: JUCE/usermodules/FxmeJuceTools
+
+      - name: Configure CMake
+        run: |
+          cmake -B Gloubiboulga/build \
+                -S Gloubiboulga \
+                -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build Gloubiboulga/build --config Release
+
+      - name: Verify universal binary
+        run: |
+          lipo -info "Gloubiboulga/build/Gloubiboulga_artefacts/Release/VST3/Gloubiboulga.vst3/Contents/MacOS/Gloubiboulga"
+
+      - name: Upload VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gloubiboulga-VST3-macOS-universal
+          path: Gloubiboulga/build/Gloubiboulga_artefacts/Release/VST3/
+
+      - name: Upload AU
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gloubiboulga-AU-macOS-universal
+          path: Gloubiboulga/build/Gloubiboulga_artefacts/Release/AU/

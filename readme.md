@@ -68,15 +68,6 @@ Many of the parameters in Gloubiboulga come in pairs: a **Mean** value and a **S
 *   **Level**: The final output volume of the plugin.
 *   **Scopes**: The dual scrolling scopes at the bottom right visualize the final stereo output signal.
 
-## Building from Source
-
-Gloubiboulga is a standard JUCE project. To build it, you will need:
-*   A C++ compiler (GCC, Clang, MSVC).
-*   The JUCE framework (version 8 or later is recommended).
-*   The `FxmeJuceTools` library, integrated as a JUCE module to the project.
-
-Open the `.jucer` file in the Projucer, set up your exporters for your desired formats (VST3, AU, etc.) and build environment (e.g., Makefile, Xcode, Visual Studio), and then build the project.
-
 ## Contact
 
 olivier.doare@ensta.fr

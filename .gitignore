@@ -1,9 +1,10 @@
 # JUCE specific
-# Ignore the auto-generated JuceLibraryCode directory
+# Ignore the auto-generated JuceLibraryCode directory (Projucer)
 /JuceLibraryCode/
 
 # Ignore all build folders
 /Builds/
+/build/
 /Assets/bak/
 /doxygen_docs/
 

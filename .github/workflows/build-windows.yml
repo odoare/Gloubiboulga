@@ -1,0 +1,43 @@
+name: Build Windows
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Gloubiboulga
+        uses: actions/checkout@v4
+        with:
+          path: Gloubiboulga
+
+      - name: Checkout JUCE
+        uses: actions/checkout@v4
+        with:
+          repository: juce-framework/JUCE
+          ref: 8.0.12
+          path: JUCE
+
+      - name: Checkout FxmeJuceTools
+        uses: actions/checkout@v4
+        with:
+          repository: odoare/FxmeJuceTools
+          path: JUCE/usermodules/FxmeJuceTools
+
+      - name: Configure
+        run: cmake -B Gloubiboulga/build -S Gloubiboulga -G "Visual Studio 17 2022"
+
+      - name: Build
+        run: cmake --build Gloubiboulga/build --config Release --parallel
+
+      - name: Upload VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gloubiboulga-VST3-Windows-x86_64
+          path: Gloubiboulga/build/Gloubiboulga_artefacts/Release/VST3/
