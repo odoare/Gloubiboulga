@@ -133,16 +133,23 @@ jobs:
           cmake -B Gloubiboulga/build -S Gloubiboulga -G "Visual Studio 17 2022"
           cmake --build Gloubiboulga/build --config Release --parallel
 
-      - name: Package
+      - name: Install NSIS
+        run: choco install nsis -y
+
+      - name: Build installer
+        shell: bash
         run: |
-          Compress-Archive `
-            -Path "Gloubiboulga/build/Gloubiboulga_artefacts/Release/VST3" `
-            -DestinationPath "Gloubiboulga-VST3-Windows-x86_64.zip"
+          VERSION="${{ github.ref_name }}"
+          VERSION="${VERSION#v}"
+          cp -r "Gloubiboulga/build/Gloubiboulga_artefacts/Release/VST3/Gloubiboulga.vst3" \
+                "Gloubiboulga/packaging/windows/"
+          cd Gloubiboulga/packaging/windows
+          makensis -DVERSION="$VERSION" installer.nsi
 
       - uses: actions/upload-artifact@v4
         with:
-          name: windows-x86_64
-          path: Gloubiboulga-VST3-Windows-x86_64.zip
+          name: windows-installer
+          path: Gloubiboulga/packaging/windows/Gloubiboulga-Windows-Setup.exe
 
   # ── macOS universal (arm64 + x86_64) ──────────────────────────────────────
   build-macos:
@@ -179,7 +186,51 @@ jobs:
         run: |
           lipo -info "Gloubiboulga/build/Gloubiboulga_artefacts/Release/VST3/Gloubiboulga.vst3/Contents/MacOS/Gloubiboulga"
 
-      - name: Package
+      - name: Build pkg installer
+        run: |
+          VERSION="${{ github.ref_name }}"
+          VERSION="${VERSION#v}"
+
+          # Populate the pkg root with both formats
+          mkdir -p pkg_root/Library/Audio/Plug-Ins/VST3
+          mkdir -p pkg_root/Library/Audio/Plug-Ins/Components
+          cp -r "Gloubiboulga/build/Gloubiboulga_artefacts/Release/VST3/Gloubiboulga.vst3" \
+                "pkg_root/Library/Audio/Plug-Ins/VST3/"
+          cp -r "Gloubiboulga/build/Gloubiboulga_artefacts/Release/AU/Gloubiboulga.component" \
+                "pkg_root/Library/Audio/Plug-Ins/Components/"
+
+          pkgbuild \
+            --root pkg_root \
+            --identifier com.FXMechanics.Gloubiboulga \
+            --version "$VERSION" \
+            --install-location / \
+            Gloubiboulga-macOS.pkg
+
+          # ── Code-signing + notarization (requires Apple Developer account) ──
+          # Uncomment and populate the repository secrets to enable:
+          #
+          # echo "$APPLE_CERT_P12" | base64 --decode > cert.p12
+          # security create-keychain -p "" build.keychain
+          # security import cert.p12 -k build.keychain -P "$APPLE_CERT_PASSWORD" -T /usr/bin/codesign
+          # security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
+          # codesign --deep --force --timestamp --options runtime \
+          #          --sign "Developer ID Application: Your Name (TEAMID)" \
+          #          pkg_root/Library/Audio/Plug-Ins/VST3/Gloubiboulga.vst3
+          # codesign --deep --force --timestamp --options runtime \
+          #          --sign "Developer ID Application: Your Name (TEAMID)" \
+          #          pkg_root/Library/Audio/Plug-Ins/Components/Gloubiboulga.component
+          # productsign --sign "Developer ID Installer: Your Name (TEAMID)" \
+          #             Gloubiboulga-macOS.pkg Gloubiboulga-macOS-signed.pkg
+          # xcrun notarytool submit Gloubiboulga-macOS-signed.pkg \
+          #   --apple-id "$APPLE_ID" --password "$APPLE_APP_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
+          # xcrun stapler staple Gloubiboulga-macOS-signed.pkg
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-pkg
+          path: Gloubiboulga-macOS.pkg
+
+      - name: Package raw zips (for advanced users)
         run: |
           cd Gloubiboulga/build/Gloubiboulga_artefacts/Release
           zip -r ${{ github.workspace }}/Gloubiboulga-VST3-macOS-universal.zip VST3/
@@ -212,5 +263,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/*.zip
+          files: |
+            artifacts/*.zip
+            artifacts/*.pkg
+            artifacts/*.exe
           generate_release_notes: true

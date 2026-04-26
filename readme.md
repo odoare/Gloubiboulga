@@ -68,6 +68,63 @@ Many of the parameters in Gloubiboulga come in pairs: a **Mean** value and a **S
 *   **Level**: The final output volume of the plugin.
 *   **Scopes**: The dual scrolling scopes at the bottom right visualize the final stereo output signal.
 
+## Installation
+
+Pre-built binaries are available on the [Releases](../../releases) page. Download the zip for your platform and follow the instructions below.
+
+---
+
+### macOS — AU in Logic Pro
+
+1. Unzip the downloaded archive and locate `Gloubiboulga.component`.
+2. Copy it to your user plug-in folder:
+   ```sh
+   cp -r Gloubiboulga.component ~/Library/Audio/Plug-Ins/Components/
+   ```
+3. **Gatekeeper quarantine:** macOS will block any plugin that is not signed with an Apple Developer certificate. Remove the quarantine flag before opening Logic:
+   ```sh
+   xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/Components/Gloubiboulga.component
+   ```
+4. Open (or restart) Logic Pro. It scans the Components folder on startup.
+5. If Logic marks it as *Failed* in the Plug-in Manager, open **Logic Pro > Settings > Plug-in Manager**, find Gloubiboulga, and click **Reset & Rescan**.
+
+> **System-wide install** (all users): copy to `/Library/Audio/Plug-Ins/Components/` instead (requires `sudo`).
+
+---
+
+### macOS — VST3 in Reaper
+
+1. Copy `Gloubiboulga.vst3` to `~/Library/Audio/Plug-Ins/VST3/`.
+2. Remove the quarantine flag:
+   ```sh
+   xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Gloubiboulga.vst3
+   ```
+3. In Reaper: **Options › Preferences › Plug-ins › VST** → click **Re-scan**.
+
+---
+
+### Windows — VST3 in Reaper
+
+1. Unzip and copy the `Gloubiboulga.vst3` folder to:
+   ```
+   C:\Program Files\Common Files\VST3\
+   ```
+2. In Reaper: **Options › Preferences › Plug-ins › VST** → click **Re-scan**.
+
+> If Reaper does not pick it up after a rescan, verify that the VST3 path above is listed under **VST plug-in paths** in the same preferences panel. Add it manually if needed.
+
+---
+
+### Linux — VST3 in Reaper
+
+1. Copy the `Gloubiboulga.vst3` directory to `~/.vst3/`:
+   ```sh
+   cp -r Gloubiboulga.vst3 ~/.vst3/
+   ```
+2. In Reaper: **Options › Preferences › Plug-ins › VST** → click **Re-scan**.
+
+---
+
 ## Contact
 
 olivier.doare@ensta.fr

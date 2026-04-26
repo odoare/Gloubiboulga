@@ -5,6 +5,10 @@
 # Ignore all build folders
 /Builds/
 /build/
+
+# Packaging artefacts (generated during CI)
+/packaging/windows/Gloubiboulga.vst3
+/packaging/windows/Gloubiboulga-Windows-Setup.exe
 /Assets/bak/
 /doxygen_docs/
 
