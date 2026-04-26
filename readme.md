@@ -70,54 +70,69 @@ Many of the parameters in Gloubiboulga come in pairs: a **Mean** value and a **S
 
 ## Installation
 
-Pre-built binaries are available on the [Releases](../../releases) page. Download the zip for your platform and follow the instructions below.
+Pre-built binaries are available on the [Releases](../../releases) page.
 
 ---
 
-### macOS — AU in Logic Pro
+### macOS
 
-1. Unzip the downloaded archive and locate `Gloubiboulga.component`.
-2. Copy it to your user plug-in folder:
-   ```sh
-   cp -r Gloubiboulga.component ~/Library/Audio/Plug-Ins/Components/
-   ```
-3. **Gatekeeper quarantine:** macOS will block any plugin that is not signed with an Apple Developer certificate. Remove the quarantine flag before opening Logic:
-   ```sh
-   xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/Components/Gloubiboulga.component
-   ```
-4. Open (or restart) Logic Pro. It scans the Components folder on startup.
-5. If Logic marks it as *Failed* in the Plug-in Manager, open **Logic Pro > Settings > Plug-in Manager**, find Gloubiboulga, and click **Reset & Rescan**.
+Download **`Gloubiboulga-macOS.pkg`** from the Releases page.
 
-> **System-wide install** (all users): copy to `/Library/Audio/Plug-Ins/Components/` instead (requires `sudo`).
+#### Step 1 — Run the installer
+
+Double-click the `.pkg` file. The installer will copy:
+- `Gloubiboulga.vst3` → `/Library/Audio/Plug-Ins/VST3/`
+- `Gloubiboulga.component` → `/Library/Audio/Plug-Ins/Components/`
+
+These are system-wide locations accessible to all DAWs and all users on the machine. An administrator password is required.
+
+#### Step 2 — Allow the plugin in System Settings
+
+Because Gloubiboulga is not signed with a paid Apple Developer certificate, macOS will block it the first time a DAW tries to load it. This is a one-time step per machine.
+
+1. Open a DAW (Logic Pro or Reaper). It will attempt to scan the new plugin and macOS will silently block it.
+2. Open **System Settings → Privacy & Security**.
+3. Scroll down to the **Security** section. You will see a message:
+   > *"Gloubiboulga.vst3" was blocked because it is not from an identified developer.*
+4. Click **Allow Anyway**.
+5. Restart the DAW. macOS will show a final confirmation dialog — click **Open** (or **Allow**). The plugin will load normally from this point on and you will never be prompted again.
+
+> If you do not see the "Allow Anyway" button, make sure you opened the DAW first so that macOS had a chance to block the plugin and register it in Privacy & Security.
+
+#### Step 3 — Logic Pro: rescan if needed
+
+Logic Pro maintains its own plugin validation cache. If the plugin appears as *Failed* after following the steps above:
+
+1. Open **Logic Pro → Settings → Plug-in Manager**.
+2. Find Gloubiboulga in the list.
+3. Click **Reset & Rescan Selection**.
+
+Logic will re-validate the plugin and it should show as active.
+
+#### Step 4 — Reaper: rescan
+
+In Reaper: **Options › Preferences › Plug-ins › VST** → click **Re-scan**.
 
 ---
 
-### macOS — VST3 in Reaper
+### Windows
 
-1. Copy `Gloubiboulga.vst3` to `~/Library/Audio/Plug-Ins/VST3/`.
-2. Remove the quarantine flag:
-   ```sh
-   xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Gloubiboulga.vst3
-   ```
-3. In Reaper: **Options › Preferences › Plug-ins › VST** → click **Re-scan**.
+Download **`Gloubiboulga-Windows-Setup.exe`** from the Releases page.
 
----
+1. Double-click the installer and follow the prompts. Administrator privileges are required.
+   The VST3 plugin is installed to `C:\Program Files\Common Files\VST3\`.
+2. The installer registers an uninstaller under **Settings → Apps** (search for *Gloubiboulga*).
+3. Open Reaper: **Options › Preferences › Plug-ins › VST** → click **Re-scan**.
 
-### Windows — VST3 in Reaper
-
-1. Unzip and copy the `Gloubiboulga.vst3` folder to:
-   ```
-   C:\Program Files\Common Files\VST3\
-   ```
-2. In Reaper: **Options › Preferences › Plug-ins › VST** → click **Re-scan**.
-
-> If Reaper does not pick it up after a rescan, verify that the VST3 path above is listed under **VST plug-in paths** in the same preferences panel. Add it manually if needed.
+> If Reaper does not pick up the plugin after a rescan, check that `C:\Program Files\Common Files\VST3\` is listed under **VST plug-in paths** in the same preferences panel and add it manually if needed.
 
 ---
 
-### Linux — VST3 in Reaper
+### Linux
 
-1. Copy the `Gloubiboulga.vst3` directory to `~/.vst3/`:
+Download **`Gloubiboulga-VST3-Linux-x86_64.zip`** (Intel/AMD) or **`Gloubiboulga-VST3-Linux-arm64.zip`** (ARM) from the Releases page.
+
+1. Unzip and copy the `Gloubiboulga.vst3` directory to your VST3 folder:
    ```sh
    cp -r Gloubiboulga.vst3 ~/.vst3/
    ```
