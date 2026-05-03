@@ -227,11 +227,13 @@ void GloubiboulgaAudioProcessor::changeProgramName (int index, const juce::Strin
 //==============================================================================
 int GloubiboulgaAudioProcessor::getMeasureSizeInSamples()
 {
-    // A measure is: (numBeats * 4) / timeSigDenominator * (sampleRate / bpm * 60)
-    // But without access to DAW tempo, we estimate based on 120 BPM and current timeSig
-    auto posInfo = getPlayHead()->getPosition();
+    auto* ph = getPlayHead();
+    if (!ph)
+        return static_cast<int>(sampleRate);
+
+    auto posInfo = ph->getPosition();
     if (!posInfo.hasValue())
-        return static_cast<int>(sampleRate);  // Default to 1 second
+        return static_cast<int>(sampleRate);
     
     double bpm = posInfo->getBpm().orFallback(120.0);
     int timeSigNumerator = posInfo->getTimeSignature().hasValue() ? 
@@ -245,6 +247,9 @@ int GloubiboulgaAudioProcessor::getMeasureSizeInSamples()
 
 void GloubiboulgaAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    if (sampleRate <= 0 || samplesPerBlock <= 0)
+        return;
+
     this->sampleRate = sampleRate;
     this->samplesPerBlock = samplesPerBlock;
     
@@ -306,10 +311,13 @@ void GloubiboulgaAudioProcessor::generateGlitchCycle()
     randomGen.setSeed(seed);
     lastRandomSeed = seed;
     
-    if (!getPlayHead()->getPosition().hasValue())
+    auto* ph = getPlayHead();
+    if (!ph)
         return;
-    
-    auto posInfo = *getPlayHead()->getPosition();
+    auto posOpt = ph->getPosition();
+    if (!posOpt.hasValue())
+        return;
+    auto posInfo = *posOpt;
     int timeSigNumerator = posInfo.getTimeSignature().hasValue() ? 
         posInfo.getTimeSignature()->numerator : 4;
     int timeSigDenominator = posInfo.getTimeSignature().hasValue() ? 
@@ -516,7 +524,9 @@ void GloubiboulgaAudioProcessor::updateGlitchCycleIfNeeded()
     if (static_cast<int>(cycleDurationParam->load()) != lastCycleDuration) changed = true;
 
     // Also check if time signature or BPM changed, as they affect cycle length and timing
-    auto posInfo = getPlayHead()->getPosition();
+    juce::Optional<juce::AudioPlayHead::PositionInfo> posInfo;
+    if (auto* ph = getPlayHead())
+        posInfo = ph->getPosition();
     int currentTimeSigNumerator = posInfo.hasValue() && posInfo->getTimeSignature().hasValue() ? posInfo->getTimeSignature()->numerator : 4;
     int currentTimeSigDenominator = posInfo.hasValue() && posInfo->getTimeSignature().hasValue() ? posInfo->getTimeSignature()->denominator : 4;
     double currentBpm = posInfo.hasValue() ? posInfo->getBpm().orFallback(120.0) : 120.0;
